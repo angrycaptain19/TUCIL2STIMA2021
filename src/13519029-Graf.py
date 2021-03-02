@@ -15,7 +15,7 @@ class Graf:
         self.jmlSisi = 0
     def InputSimpul(self, namaSimpul):
         # Prosedur yang menambahkan simpul ke graf jika simpul belum ada di graf.
-        if self.CariSimpulDgnNama(namaSimpul) == None:
+        if self.CariSimpulDgnNama(namaSimpul) is None:
             simpul = SIMPUL.Simpul(namaSimpul)
             self.simpul2.append(simpul)
             self.jmlSimpul += 1
@@ -53,7 +53,7 @@ class Graf:
     def HapusSimpul(self, namaSimpul):
         # Prosedur yang menghapus simpul bernama "namaSimpul" pada graf beserta sisi2nya jika ada.
         ketemu = False
-        for i in range(0,self.jmlSimpul):
+        for i in range(self.jmlSimpul):
             if self.simpul2[i].nama == namaSimpul or ketemu:
                 ketemu = True
                 if i == self.jmlSimpul-1:
@@ -75,7 +75,7 @@ class Graf:
     def HapusSisi(self, namaSimpulAwal, namaSimpulAkhir):
         # Prosedur yang menghapus sisi yang diinput pada graf jika ada.
         ketemu = False
-        for i in range(0,self.jmlSisi):
+        for i in range(self.jmlSisi):
             if (self.sisi2[i].simpulAwal.nama == namaSimpulAwal and self.sisi2[i].simpulAkhir.nama == namaSimpulAkhir) or ketemu:
                 ketemu = True
                 if i == self.jmlSisi-1:
@@ -103,17 +103,13 @@ class Graf:
         for baris in fileperbaris:
             namaSimpulPertama = ""
             for huruf in baris:
-                if namaSimpulPertama == "": 
-                    if huruf != ',' and huruf != '.' and huruf != ' ' and huruf != '\n':
-                        namaMatkul += huruf
-                    elif huruf == ',' or huruf == '.':
-                        namaSimpulPertama = namaMatkul
-                        self.InputSimpul(namaMatkul)
-                        namaMatkul = ""
-                else:
-                    if huruf != ',' and huruf != '.' and huruf != ' ' and huruf != '\n':
-                        namaMatkul += huruf
-                    elif huruf == ',' or huruf == '.':
-                        self.InputSimpul(namaMatkul)
-                        self.InputSisi(namaMatkul,namaSimpulPertama)
-                        namaMatkul = ""
+                if huruf not in [',', '.', ' ', '\n']:
+                    namaMatkul += huruf
+                elif namaSimpulPertama == "" and huruf in [',', '.']:
+                    namaSimpulPertama = namaMatkul
+                    self.InputSimpul(namaMatkul)
+                    namaMatkul = ""
+                elif huruf in [',', '.']:
+                    self.InputSimpul(namaMatkul)
+                    self.InputSisi(namaMatkul,namaSimpulPertama)
+                    namaMatkul = ""
